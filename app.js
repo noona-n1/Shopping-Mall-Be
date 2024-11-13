@@ -25,7 +25,7 @@ mongoose
     dbConnected = false; // 연결 실패 시 상태 변경
   });
 
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
   const statusMessage = dbConnected
     ? "MongoDB is connected."
     : "MongoDB is not connected.";
