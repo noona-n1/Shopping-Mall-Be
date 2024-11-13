@@ -25,12 +25,11 @@ mongoose
     dbConnected = false; // 연결 실패 시 상태 변경
   });
 
-// 루트 경로 응답 - MongoDB 연결 상태 포함
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
   const statusMessage = dbConnected
     ? "MongoDB is connected."
     : "MongoDB is not connected.";
-  res.status(200).send(`Welcome to the API! ${statusMessage}`);
+  res.status(200).json({ message: `Welcome to the API! ${statusMessage}` });
 });
 
 // 라우터 설정
