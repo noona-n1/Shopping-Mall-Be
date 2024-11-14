@@ -11,5 +11,10 @@ router.delete(
   authController.authenticate,
   addressListController.deleteAddress
 );
+router.put(
+  "/",
+  authController.authenticate,
+  addressListController.updateAddress
+);
 
 module.exports = router;
