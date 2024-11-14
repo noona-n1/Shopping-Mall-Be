@@ -23,7 +23,29 @@ addressListController.getAddress = async (req, res) => {
     } else {
       return res
         .status(200)
-        .json({ status: "success", message: "저장된 주소가 없습니다." });
+        .json({ status: "success", message: "No addresses found." });
+    }
+  } catch (error) {
+    return res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
+addressListController.deleteAddress = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { addressId } = req.body;
+    const result = await AddressList.deleteOne({ _id: addressId, userId });
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .json({
+          status: "success",
+          message: "The address has been successfully deleted.",
+        });
+    } else {
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Address not found." });
     }
   } catch (error) {
     return res.status(400).json({ status: "fail", error: error.message });
