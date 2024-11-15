@@ -20,13 +20,14 @@ addressListController.getAddress = async (req, res) => {
     const { userId } = req;
 
     const addresses = await AddressList.find({ userId });
-    if (addresses.length > 0) {
-      return res.status(200).json({ status: "success", data: addresses });
-    } else {
-      return res
-        .status(200)
-        .json({ status: "success", message: "No addresses found." });
-    }
+    return res.status(200).json({
+      status: "success",
+      data: addresses,
+      message:
+        addresses.length > 0
+          ? "Address list fetched successfully."
+          : "No addresses found.",
+    });
   } catch (error) {
     return res.status(400).json({ status: "fail", error: error.message });
   }
