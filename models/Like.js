@@ -19,5 +19,13 @@ const likeSchema = new mongoose.Schema(
 // 사용자와 제품의 조합을 유니크하게 만들어 한 사용자가 동일한 제품에 대해 중복으로 좋아요 누르지 못하게 함
 likeSchema.index({ userId: 1, productId: 1 }, { unique: true });
 
+likeSchema.methods.toJSON = function () {
+  const obj = this._doc;
+  delete obj.updatedAt;
+  delete obj.__v;
+  delete obj._id;
+  return obj;
+};
+
 const Like = mongoose.model("Like", likeSchema);
 module.exports = Like;

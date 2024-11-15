@@ -24,8 +24,8 @@ addressListController.getAddress = async (req, res) => {
       return res.status(200).json({ status: "success", data: addresses });
     } else {
       return res
-        .status(200)
-        .json({ status: "success", message: "No addresses found." });
+        .status(404)
+        .json({ status: "fail", message: "No addresses found." });
     }
   } catch (error) {
     return res.status(400).json({ status: "fail", error: error.message });
