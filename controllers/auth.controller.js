@@ -3,7 +3,7 @@ const bcryptjs = require("bcryptjs");
 const generateToken = require("../models/User");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-require("dotenv").config;
+require("dotenv").config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
