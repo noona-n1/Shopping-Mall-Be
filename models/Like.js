@@ -23,7 +23,6 @@ likeSchema.methods.toJSON = function () {
   const obj = this._doc;
   delete obj.updatedAt;
   delete obj.__v;
-  delete obj._id;
   return obj;
 };
 

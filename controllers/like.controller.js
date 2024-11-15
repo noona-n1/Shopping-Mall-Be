@@ -29,4 +29,21 @@ likeController.toggleLike = async (req, res) => {
   }
 };
 
+likeController.getLikeList = async (req, res) => {
+  try {
+    const { userId } = req;
+    const likeList = await Like.find({ userId });
+    return res.status(200).json({
+      status: "success",
+      data: likeList,
+      message:
+        likeList.length > 0
+          ? "Like list fetched successfully"
+          : "No likes found",
+    });
+  } catch (error) {
+    return res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
 module.exports = likeController;
