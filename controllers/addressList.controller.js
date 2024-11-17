@@ -15,13 +15,14 @@ addressListController.addAddress = async (req, res) => {
   }
 };
 
-addressListController.getAddress = async (req, res) => {
+addressListController.getAddresses = async (req, res) => {
   try {
     const { userId } = req;
 
     const addresses = await AddressList.find({ userId });
     return res.status(200).json({
       status: "success",
+      count: addresses.length,
       data: addresses,
       message:
         addresses.length > 0
