@@ -92,4 +92,64 @@ productController.deleteProduct = async (req, res) => {
     }
 }
 
+productController.getProductById = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const product = await Product.findById(id);
+
+        res.status(200).json({
+            status: "ok",
+            product
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: "fail",
+            message: err.message
+        });
+    }
+}
+
+productController.checkStock = async (item) => {
+    const product = await Product.findById(item.productId);
+    if (product.stock[item.size] < item.qty) {
+        return {isVerify: false, message: `${product.name} ${item.size} size is out of stock`};
+    } else {
+        const newStock = {...product.stock};
+        newStock[item.size] -= item.qty;
+        
+        product.stock = newStock;
+
+        return {isVerify: true, product};
+    }
+}
+
+productController.checkItemStock = async (orderList) => {
+    const result = [];
+    let newProduct = [];
+
+    // Promise.all 비동기 로직을 병렬로 처리
+    await Promise.all(
+        orderList.map(async (item) => {
+            const checkStock = await productController.checkStock(item);
+            if (!checkStock.isVerify) {
+                result.push({item, message: checkStock.message});
+            }else {
+                newProduct.push(checkStock.product);
+            }
+        })
+    );
+
+    if(result.length > 0) {
+        return result;
+    }else {
+        newProduct.map(async (product) => {
+            await product.save();
+        });
+    }
+
+    return result;
+}
+
+
 module.exports = productController;
