@@ -24,5 +24,11 @@ const AddressListSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+AddressListSchema.methods.toJSON = function () {
+  const obj = this._doc;
+  delete obj.__v;
+  return obj;
+};
+
 const AddressList = mongoose.model("AddressList", AddressListSchema);
 module.exports = AddressList;

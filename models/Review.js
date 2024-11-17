@@ -12,11 +12,17 @@ const ReviewSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
-    content: { type: String, required: true },
+    content: { type: String },
     score: { type: Number, required: true, min: 1, max: 5 },
   },
   { timestamps: true }
 );
+
+ReviewSchema.methods.toJSON = function () {
+  const obj = this._doc;
+  delete obj.__v;
+  return obj;
+};
 
 const Review = mongoose.model("Review", ReviewSchema);
 module.exports = Review;
