@@ -18,5 +18,11 @@ const ReviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+ReviewSchema.methods.toJSON = function () {
+  const obj = this._doc;
+  delete obj.__v;
+  return obj;
+};
+
 const Review = mongoose.model("Review", ReviewSchema);
 module.exports = Review;
