@@ -81,7 +81,11 @@ addressListController.updateAddress = async (req, res) => {
     if (updateAddress.modifiedCount > 0) {
       return res
         .status(200)
-        .json({ status: "success", message: "Address updated successfully." });
+        .json({
+          status: "success",
+          message: "Address updated successfully.",
+          data: updateAddress,
+        });
     } else {
       return res.status(404).json({
         status: "fail",
