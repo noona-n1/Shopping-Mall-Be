@@ -4,9 +4,9 @@ const productController = {};
 
 productController.createProduct = async (req, res) => {
     try {
-        const { sku, name, image, category, description, price, stock, brand } = req.body;
+        const { sku, name, image, category, description, price, stock, brand, salePrice } = req.body;
 
-        const newProduct = new Product({sku, name, image, category, description, price, stock, brand});
+        const newProduct = new Product({sku, name, image, category, description, price, stock, brand, salePrice});
 
         await newProduct.save();
 
