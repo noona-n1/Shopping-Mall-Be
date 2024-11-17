@@ -18,13 +18,19 @@ productController.createProduct = async (req, res) => {
 
 productController.getProducts = async (req, res) => {
     try {
-        const {page, name, limit} = req.query;
+        const {page, name, limit, sort} = req.query;
         const cond = name ? {name: {$regex: name, $options: "i"}} : {};
         let query = Product.find(cond);
         let response = {status: "ok"};
         
         if(page) {
             query = query.skip((page - 1) * limit).limit(limit);
+
+            if(sort === "highPrice") {
+                query = query.sort({price: -1});
+            } else if(sort === "lowPrice") {
+                query = query.sort({price: 1});
+            }
 
             const total = await Product.find(cond).countDocuments();
             const totalPages = Math.ceil(total / limit);
