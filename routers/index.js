@@ -6,11 +6,13 @@ const authApi = require("./auth.api");
 const productApi = require("./product.api");
 const addressListApi = require("./addressList.api");
 const likeApi = require("./like.api");
+const cartApi = require("./cart.api");
 
 router.use("/user", userApi);
 router.use("/auth", authApi);
 router.use("/product", productApi);
 router.use("/addresses", addressListApi);
 router.use("/like", likeApi);
+router.use("/cart", cartApi);
 
 module.exports = router;
