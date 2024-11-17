@@ -93,4 +93,28 @@ reviewController.updateReview = async (req, res) => {
   }
 };
 
+reviewController.deleteReview = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { reviewId } = req.params;
+
+    const deleteReview = await Review.deleteOne({
+      _id: reviewId,
+      userId,
+    });
+    if (deleteReview.deletedCount > 0) {
+      return res.status(200).json({
+        status: "success",
+        message: "The review has been successfully deleted.",
+      });
+    } else {
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Review not found." });
+    }
+  } catch (error) {
+    return res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
 module.exports = reviewController;

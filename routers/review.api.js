@@ -11,5 +11,10 @@ router.put(
   authController.authenticate,
   reviewController.updateReview
 );
+router.delete(
+  "/:reviewId",
+  authController.authenticate,
+  reviewController.deleteReview
+);
 
 module.exports = router;
