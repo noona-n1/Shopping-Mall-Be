@@ -5,7 +5,7 @@ const likeController = {};
 likeController.toggleLike = async (req, res) => {
   try {
     const { userId } = req;
-    const { productId } = req.body;
+    const { productId } = req.params;
 
     const likeRecord = await Like.findOne({ userId, productId });
     if (likeRecord) {
