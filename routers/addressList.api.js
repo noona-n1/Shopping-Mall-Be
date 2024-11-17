@@ -8,7 +8,7 @@ router.use(authController.authenticate);
 
 router.post("/", addressListController.addAddress);
 router.get("/", addressListController.getAddress);
-router.delete("/", addressListController.deleteAddress);
-router.put("/", addressListController.updateAddress);
+router.delete("/:addressId", addressListController.deleteAddress);
+router.put("/:addressId", addressListController.updateAddress);
 
 module.exports = router;
