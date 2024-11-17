@@ -15,13 +15,13 @@ router.get("/",
 
 router.get("/admin", 
     authController.authenticate,
-    // authController.checkAdminPermission,
+    authController.checkAdminPermission,
     orderController.getAdminOrders
 );
 
 router.put("/:id", 
     authController.authenticate,
-    // authController.checkAdminPermission,
+    authController.checkAdminPermission,
     orderController.updateOrder
 );
 
