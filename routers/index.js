@@ -9,7 +9,7 @@ const likeApi = require("./like.api");
 const reviewApi = require("./review.api");
 const cartApi = require("./cart.api");
 const orderApi = require("./order.api");
-
+const queryApi = require("./query.api");
 
 router.use("/user", userApi);
 router.use("/auth", authApi);
@@ -19,5 +19,6 @@ router.use("/like", likeApi);
 router.use("/review", reviewApi);
 router.use("/cart", cartApi);
 router.use("/order", orderApi);
+router.use("/query", queryApi);
 
 module.exports = router;
