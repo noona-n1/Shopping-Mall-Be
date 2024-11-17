@@ -27,4 +27,18 @@ reviewController.createReview = async (req, res) => {
   }
 };
 
+reviewController.getProductReview = async (req, res) => {
+  try {
+    const { product_id } = req.params;
+    const reviews = await Review.find({ productId: product_id });
+    if (reviews) {
+      return res
+        .status(200)
+        .json({ status: "success", count: reviews.length, data: reviews });
+    }
+  } catch (error) {
+    return res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
 module.exports = reviewController;
