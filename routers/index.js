@@ -8,6 +8,7 @@ const addressListApi = require("./addressList.api");
 const likeApi = require("./like.api");
 const reviewApi = require("./review.api");
 const cartApi = require("./cart.api");
+const orderApi = require("./order.api");
 
 
 router.use("/user", userApi);
@@ -17,5 +18,6 @@ router.use("/addresses", addressListApi);
 router.use("/like", likeApi);
 router.use("/review", reviewApi);
 router.use("/cart", cartApi);
+router.use("/order", orderApi);
 
 module.exports = router;
