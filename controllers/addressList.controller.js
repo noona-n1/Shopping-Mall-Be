@@ -36,7 +36,7 @@ addressListController.getAddress = async (req, res) => {
 addressListController.deleteAddress = async (req, res) => {
   try {
     const { userId } = req;
-    const { addressId } = req.body;
+    const { addressId } = req.params;
 
     const deleteAddress = await AddressList.deleteOne({
       _id: addressId,
@@ -59,33 +59,38 @@ addressListController.deleteAddress = async (req, res) => {
 
 addressListController.updateAddress = async (req, res) => {
   try {
-    const { addressId, shipto } = req.body;
+    const { userId } = req;
+    const { addressId } = req.params;
+    const { shipto } = req.body;
 
-    const existingAddress = await AddressList.findById(addressId);
+    const existingAddress = await AddressList.findOne({
+      _id: addressId,
+      userId,
+    });
     if (!existingAddress) {
       return res
         .status(404)
         .json({ status: "fail", message: "Address not found." });
     }
 
-    const updateAddress = await AddressList.updateOne(
-      { _id: addressId },
+    const updateAddress = await AddressList.findOneAndUpdate(
+      { _id: addressId, userId },
       {
         $set: {
           "shipto.address": shipto.address,
           "shipto.city": shipto.city,
           "shipto.zip": shipto.zip,
         },
-      }
+      },
+      { new: true }
     );
-    if (updateAddress.modifiedCount > 0) {
-      return res
-        .status(200)
-        .json({
-          status: "success",
-          message: "Address updated successfully.",
-          data: updateAddress,
-        });
+
+    if (updateAddress) {
+      return res.status(200).json({
+        status: "success",
+        message: "Address updated successfully.",
+        data: updateAddress,
+      });
     } else {
       return res.status(404).json({
         status: "fail",
