@@ -116,43 +116,67 @@ authController.loginWithKakao = async (req, res) => {
   }
 };
 
+const qs = require("qs");
 authController.handleKakaoCallback = async (req, res) => {
   try {
-    const { code } = req.query; // 인가 코드 추출
+    // 1. 카카오가 전달한 인증 코드 추출
+    const { code } = req.query;
+    if (!code) {
+      return res.status(400).json({ error: "Authorization code not provided" });
+    }
     console.log("카카오 인증 코드:", code);
-    console.log("KAKAO_REDIRECT_URI:", KAKAO_REDIRECT_URI);
-    // 요청 데이터
-    const payload = {
+
+    // 2. 카카오에 액세스 토큰 요청
+    const payload = qs.stringify({
       grant_type: "authorization_code",
-      client_id: KAKAO_CLIENT_ID,
+      client_id: process.env.KAKAO_CLIENT_ID, // 카카오 REST API 키
       redirect_uri: "http://localhost:5001/api/auth/kakao/callback",
       code,
-    };
-    console.log("요청 데이터:", payload);
+    });
 
-    // 액세스 토큰 요청
-    const response = await axios.post(
+    const tokenResponse = await axios.post(
       "https://kauth.kakao.com/oauth/token",
       payload,
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
-    console.log("카카오 응답 데이터:", response.data);
+    const { access_token, refresh_token } = tokenResponse.data;
+    console.log("카카오 액세스 토큰:", access_token);
 
-    const { access_token } = response.data;
+    // 3. 액세스 토큰으로 카카오 사용자 정보 요청
+    const userResponse = await axios.get("https://kapi.kakao.com/v2/user/me", {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
 
-    // 로그인 함수 호출을 위해 token 전달
-    req.body.token = access_token;
-    return authController.loginWithKakao(req, res);
+    const userInfo = userResponse.data;
+    console.log("카카오 사용자 정보:", userInfo);
+
+    // 4. 사용자 정보로 로그인 처리 또는 신규 회원가입
+    // 예: 데이터베이스에 사용자 저장 또는 JWT 발급
+    const user = {
+      id: userInfo.id,
+      email: userInfo.kakao_account.email,
+      nickname: userInfo.properties.nickname,
+    };
+
+    // 5. 클라이언트에 응답
+    return res.status(200).json({
+      message: "로그인 성공",
+      user,
+      tokens: {
+        access_token,
+        refresh_token,
+      },
+    });
   } catch (error) {
-    // 에러 메시지 출력
     console.error(
       "카카오 콜백 처리 중 오류:",
       error.response?.data || error.message
     );
-    return res
-      .status(400)
-      .json({ status: "fail", error: error.response?.data || error.message });
+    return res.status(400).json({
+      status: "fail",
+      error: error.response?.data || error.message,
+    });
   }
 };
 
