@@ -92,7 +92,6 @@ authController.loginWithKakao = async (req, res) => {
     );
 
     const { id, properties, kakao_account } = kakaoUserResponse.data;
-    console.log("kakaoUserResponse", kakaoUserResponse.data);
     const email = kakao_account.email;
     const name = properties.nickname;
 
@@ -120,17 +119,25 @@ authController.loginWithKakao = async (req, res) => {
 authController.handleKakaoCallback = async (req, res) => {
   try {
     const { code } = req.query; // 인가 코드 추출
+    console.log("카카오 인증 코드:", code);
+    console.log("KAKAO_REDIRECT_URI:", KAKAO_REDIRECT_URI);
+    // 요청 데이터
+    const payload = {
+      grant_type: "authorization_code",
+      client_id: KAKAO_CLIENT_ID,
+      redirect_uri: "http://localhost:5001/api/auth/kakao/callback",
+      code,
+    };
+    console.log("요청 데이터:", payload);
 
+    // 액세스 토큰 요청
     const response = await axios.post(
       "https://kauth.kakao.com/oauth/token",
-      {
-        grant_type: "authorization_code",
-        client_id: KAKAO_CLIENT_ID,
-        redirect_uri: KAKAO_REDIRECT_URI,
-        code,
-      },
+      payload,
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
+
+    console.log("카카오 응답 데이터:", response.data);
 
     const { access_token } = response.data;
 
@@ -138,8 +145,14 @@ authController.handleKakaoCallback = async (req, res) => {
     req.body.token = access_token;
     return authController.loginWithKakao(req, res);
   } catch (error) {
-    console.error("카카오 콜백 처리 중 오류:", error.message);
-    return res.status(400).json({ status: "fail", error: error.message });
+    // 에러 메시지 출력
+    console.error(
+      "카카오 콜백 처리 중 오류:",
+      error.response?.data || error.message
+    );
+    return res
+      .status(400)
+      .json({ status: "fail", error: error.response?.data || error.message });
   }
 };
 
