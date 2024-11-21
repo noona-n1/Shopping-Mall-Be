@@ -44,7 +44,45 @@ productController.getProducts = async (req, res) => {
   try {
     const { mainCate, subCate, subCate2 } = req.params;
     const { page, name, limit, sort } = req.query;
-    const cond = name ? { name: { $regex: name, $options: "i" } } : {};
+
+    const cond = {};
+
+    if (name) {
+      // 띄어쓰기로 단어를 분리하고 빈 문자열 제거
+      const keywords = name.split(" ").filter((word) => word.length > 0);
+
+      if (keywords.length > 1) {
+        // 여러 단어가 있는 경우 AND 검색
+        cond.$and = keywords.map((keyword) => {
+          let searchTerms = [keyword];
+
+          // 남성/남자, 여성/여자 동의어 처리
+          if (keyword === "남자") searchTerms.push("남성");
+          if (keyword === "여자") searchTerms.push("여성");
+          if (keyword === "바지") searchTerms.push("팬츠");
+
+          return {
+            $or: searchTerms.flatMap((term) => [
+              { name: { $regex: term, $options: "i" } },
+              { category: { $regex: term, $options: "i" } },
+            ]),
+          };
+        });
+      } else {
+        // 단일 단어인 경우 OR 검색
+        let searchTerms = [keywords[0]];
+
+        // 남성/남자, 여성/여자 동의어 처리
+        if (keywords[0] === "남자") searchTerms.push("남성");
+        if (keywords[0] === "여자") searchTerms.push("여성");
+        if (keywords[0] === "바지") searchTerms.push("팬츠");
+
+        cond.$or = searchTerms.flatMap((term) => [
+          { name: { $regex: term, $options: "i" } },
+          { category: { $regex: term, $options: "i" } },
+        ]);
+      }
+    }
 
     if (mainCate) {
       cond.category = { $all: [mainCate] };
