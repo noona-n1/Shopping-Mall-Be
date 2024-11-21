@@ -45,9 +45,9 @@ productController.getProducts = async (req, res) => {
             query = query.skip((page - 1) * limit).limit(limit);
 
             if(sort === "highPrice") {
-                query = query.sort({price: -1});
+                query = query.sort({realPrice: -1});
             } else if(sort === "lowPrice") {
-                query = query.sort({price: 1});
+                query = query.sort({realPrice: 1});
             } else if(sort === "highSale") {
                 query = query.sort({saleRate: -1});
             } else if(sort === "lowSale") {
