@@ -71,7 +71,7 @@ productController.getProducts = async (req, res) => {
           return {
             $or: searchTerms.flatMap((term) => [
               { name: { $regex: term, $options: "i" } },
-              { category: { $regex: term, $options: "i" } },
+              { category: term },
             ]),
           };
         });
@@ -86,7 +86,7 @@ productController.getProducts = async (req, res) => {
 
         cond.$or = searchTerms.flatMap((term) => [
           { name: { $regex: term, $options: "i" } },
-          { category: { $regex: term, $options: "i" } },
+          { category: term },
         ]);
       }
     }
